@@ -11,6 +11,10 @@
 		546EE915235FCFB200043112 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546EE914235FCFB200043112 /* SceneDelegate.swift */; };
 		546EE91C235FCFB400043112 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 546EE91B235FCFB400043112 /* Assets.xcassets */; };
 		546EE91F235FCFB400043112 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 546EE91D235FCFB400043112 /* LaunchScreen.storyboard */; };
+		6C15707F23DB499600C6080E /* YourQuestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C15707E23DB499600C6080E /* YourQuestionsView.swift */; };
+		6C15708123DB49C100C6080E /* CreateQuestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C15708023DB49C100C6080E /* CreateQuestionView.swift */; };
+		6C15708323DB49D700C6080E /* LoadOnlineQuestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C15708223DB49D700C6080E /* LoadOnlineQuestionsView.swift */; };
+		6C15708823DB4B2600C6080E /* Q&ALaunchScreen.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 6C15708723DB4B2600C6080E /* Q&ALaunchScreen.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +24,10 @@
 		546EE91B235FCFB400043112 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		546EE91E235FCFB400043112 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		546EE920235FCFB400043112 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6C15707E23DB499600C6080E /* YourQuestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YourQuestionsView.swift; sourceTree = "<group>"; };
+		6C15708023DB49C100C6080E /* CreateQuestionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateQuestionView.swift; sourceTree = "<group>"; };
+		6C15708223DB49D700C6080E /* LoadOnlineQuestionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadOnlineQuestionsView.swift; sourceTree = "<group>"; };
+		6C15708723DB4B2600C6080E /* Q&ALaunchScreen.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "Q&ALaunchScreen.jpg"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,10 +71,38 @@
 			children = (
 				546EE912235FCFB200043112 /* AppDelegate.swift */,
 				546EE914235FCFB200043112 /* SceneDelegate.swift */,
+				6C15708623DB4A1400C6080E /* Controller */,
+				6C15708523DB49FD00C6080E /* Models */,
+				6C15708423DB49E000C6080E /* Views */,
 				546EE91D235FCFB400043112 /* LaunchScreen.storyboard */,
+				6C15708723DB4B2600C6080E /* Q&ALaunchScreen.jpg */,
 				546EE91B235FCFB400043112 /* Assets.xcassets */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6C15708423DB49E000C6080E /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6C15707E23DB499600C6080E /* YourQuestionsView.swift */,
+				6C15708023DB49C100C6080E /* CreateQuestionView.swift */,
+				6C15708223DB49D700C6080E /* LoadOnlineQuestionsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		6C15708523DB49FD00C6080E /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		6C15708623DB4A1400C6080E /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -128,6 +164,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				546EE91F235FCFB400043112 /* LaunchScreen.storyboard in Resources */,
+				6C15708823DB4B2600C6080E /* Q&ALaunchScreen.jpg in Resources */,
 				546EE91C235FCFB400043112 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -140,6 +177,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				546EE913235FCFB200043112 /* AppDelegate.swift in Sources */,
+				6C15708323DB49D700C6080E /* LoadOnlineQuestionsView.swift in Sources */,
+				6C15707F23DB499600C6080E /* YourQuestionsView.swift in Sources */,
+				6C15708123DB49C100C6080E /* CreateQuestionView.swift in Sources */,
 				546EE915235FCFB200043112 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -277,6 +317,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 26RHXP32FH;
 				INFOPLIST_FILE = unit4assessment/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -294,6 +335,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 26RHXP32FH;
 				INFOPLIST_FILE = unit4assessment/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
