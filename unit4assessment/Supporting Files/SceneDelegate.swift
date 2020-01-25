@@ -18,6 +18,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: scene)
         window?.rootViewController = createMainTabBarController()
+        
         window?.makeKeyAndVisible()
     }
 
@@ -50,7 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     private func createMainTabBarController() -> UITabBarController {
-        let firstvc = UIViewController(),secondvc = UIViewController(),thirdvc  = UIViewController()
+        let firstvc = YourQuestionsController(), secondvc = CreateQuestionController(), thirdvc = LoadOnlineQuestionsController()
         firstvc.tabBarItem = UITabBarItem(title: "Cards", image: UIImage(named: "question-icon"), tag: 0)
         secondvc.tabBarItem = UITabBarItem(title: "Create", image: UIImage(named: "create-icon"), tag: 1)
         thirdvc.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 2)
