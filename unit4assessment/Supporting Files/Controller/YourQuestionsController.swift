@@ -111,13 +111,12 @@ extension YourQuestionsController: UICollectionViewDelegateFlowLayout, UICollect
         label.textColor = .black
         labels.append(label)
         collection.append(cell)
-        cell.addSubview(createButton(cell))
+        cell.contentView.addSubview(createButton(cell))
         cell.tag = cellCount
         cell.backgroundColor = .white
         cellCount += 1
         cell.isUserInteractionEnabled = true
         cell.addGestureRecognizer(setupView(cell))
-        print(labels.count)
         return cell
     }
 }
