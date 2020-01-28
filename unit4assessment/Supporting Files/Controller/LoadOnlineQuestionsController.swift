@@ -11,14 +11,7 @@ import UIKit
 class LoadOnlineQuestionsController: UIViewController {
     
     var cards = [Cards]()
-    var collections = [CustomCell]() {
-        didSet{
-            DispatchQueue.main.async {
-
-            }
-        }
-    }
-    var saveDelegate: PassCellDelegate?
+    var collections = [CustomCell]()
     
     fileprivate let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -33,19 +26,24 @@ class LoadOnlineQuestionsController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loadQuestion()
+        let tabbar = tabBarController as! BaseTabBarController
+        cards = tabbar.cards
         view.backgroundColor = .gray
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1, execute: {
-            self.collectionView.delegate = self
-            self.collectionView.dataSource = self
-            self.collectionView.reloadData()
-            self.view.addSubview(self.collectionView)
-            self.collectionView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 50).isActive = true
-            self.collectionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 1).isActive = true
-            self.collectionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -1).isActive = true
-            self.collectionView.heightAnchor.constraint(equalTo: self.view.heightAnchor, constant: 1).isActive = true
-            self.collectionView.backgroundColor = .gray
-        })
+        self.collectionView.delegate = self
+        self.collectionView.dataSource = self
+        self.collectionView.reloadData()
+        self.view.addSubview(self.collectionView)
+        self.collectionView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 50).isActive = true
+        self.collectionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 1).isActive = true
+        self.collectionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -1).isActive = true
+        self.collectionView.heightAnchor.constraint(equalTo: self.view.heightAnchor, constant: 1).isActive = true
+        self.collectionView.backgroundColor = .gray
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        let tabbar = tabBarController as! BaseTabBarController
+        cards = tabbar.cards
+        collectionView.reloadData()
     }
     
     @IBAction func gesture(_ sender: UITapGestureRecognizer) {
@@ -54,7 +52,7 @@ class LoadOnlineQuestionsController: UIViewController {
             if collections[indexPath.row].isTitle {
                 collections[indexPath.row].isTitle = false
                 UIView.transition(with: collections[indexPath.row], duration: 1, options: .transitionFlipFromLeft, animations: nil, completion: nil)
-                collections[indexPath.row].titleLabel.text = collections[indexPath.row].facts[0]
+                collections[indexPath.row].titleLabel.text = collections[indexPath.row].facts.randomElement()!
                 collections[indexPath.row].addButton.isEnabled = false
                 collections[indexPath.row].addButton.alpha = 0
             } else {
@@ -67,26 +65,16 @@ class LoadOnlineQuestionsController: UIViewController {
         }
     }
     
-    @objc func sendData(_ cell: CustomCell) {
-        saveDelegate?.save(cell: cell)
+    @IBAction func addCell(_ sender: ModdedUIButton) {
+        let cell = sender.cell
+        let tabbar = tabBarController as! BaseTabBarController
+        
+        tabbar.sharedCells.insert(cell!)
     }
     
     func setupView() -> UIGestureRecognizer {
         return UITapGestureRecognizer(target: self, action: #selector(gesture(_:)))
     }
-    
-    func loadQuestion() {
-        CardsAPI.getQuestion { (result) in
-            switch result {
-            case .failure(let appError):
-                fatalError("couldn't load questions: \(appError)")
-            case .success(let card):
-                self.cards.append(card)
-            }
-        }
-    }
-    
-
 }
 
 extension LoadOnlineQuestionsController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
@@ -102,19 +90,19 @@ extension LoadOnlineQuestionsController: UICollectionViewDelegateFlowLayout, UIC
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCell
-
+        
         cell.titleName = cards[0].cards[indexPath.row].cardTitle
         cell.titleLabel.text = cell.titleName
         cell.facts = cards[0].cards[indexPath.row].facts
         cell.titleLabel.numberOfLines = 0
-        cell.addButton.frame = CGRect(x: cell.frame.width - 35, y: 5, width: 30, height: 30)
+        cell.addButton.frame = CGRect(x: cell.frame.width - 55, y: 5, width: 50, height: 50)
         cell.addButton.setImage(.add, for: .normal)
+        cell.addButton.addTarget(self, action: #selector(addCell(_:)), for: .touchUpInside)
+        cell.addButton.cell = cell
         cell.backgroundColor = .white
         cell.isUserInteractionEnabled = true
         cell.addGestureRecognizer(setupView())
         collections.append(cell)
-        
-        sendData(cell)
         
         return cell
     }

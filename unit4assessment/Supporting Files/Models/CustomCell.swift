@@ -13,9 +13,10 @@ class CustomCell: UICollectionViewCell {
     var facts = [String]()
     var titleName = String()
     var isTitle = true
+    var indexPath: IndexPath?
     
-    var addButton: UIButton = {
-        let button = UIButton()
+    var addButton: ModdedUIButton = {
+        let button = ModdedUIButton()
         button.layer.cornerRadius = 10
         return button
     }()
@@ -44,4 +45,8 @@ class CustomCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+class ModdedUIButton: UIButton {
+    var cell: CustomCell?
 }

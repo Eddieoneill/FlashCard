@@ -55,7 +55,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         firstvc.tabBarItem = UITabBarItem(title: "Cards", image: UIImage(named: "question-icon"), tag: 0)
         secondvc.tabBarItem = UITabBarItem(title: "Create", image: UIImage(named: "create-icon"), tag: 1)
         thirdvc.tabBarItem = UITabBarItem(tabBarSystemItem: .search, tag: 2)
-        let tabVC = UITabBarController()
+        let tabVC = BaseTabBarController()
         tabVC.setViewControllers([firstvc,secondvc,thirdvc], animated: true)
         return tabVC
     }

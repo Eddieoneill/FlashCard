@@ -62,9 +62,15 @@ class CreateQuestionController: UIViewController {
     }
     
     @objc func addNewQuestion() {
-        var newQuestion: String = ""
-        newQuestion = questionTitle.text ?? "no title"
-        dismiss(animated: true, completion: nil)
+        let newCell = CustomCell()
+        let tabbar = tabBarController as! BaseTabBarController
+        newCell.titleName = questionTitle.text ?? "no title"
+        newCell.facts = [questionfact1.text ?? "no fact 1", questionfact2.text ?? "no fact 2"]
+        tabbar.sharedCells.insert(newCell)
+        
+        questionTitle.text = ""
+        questionfact1.text = ""
+        questionfact2.text = ""
     }
     
     @objc func doneWithNumberPad() {
