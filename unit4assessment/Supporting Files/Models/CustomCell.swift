@@ -10,8 +10,13 @@ import UIKit
 
 class CustomCell: UICollectionViewCell {
     
-    fileprivate let bg: UIImageView = {
-        let iv = UIImageView()
+    var facts = [String]()
+    var titleName = String()
+    var isTitle = true
+    var tap = UIGestureRecognizer(target: self, action: #selector(flip))
+    
+    var titleLabel: UILabel = {
+        let iv = UILabel()
         iv.translatesAutoresizingMaskIntoConstraints = false
         iv.contentMode = .scaleAspectFill
         iv.clipsToBounds = true
@@ -22,12 +27,25 @@ class CustomCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        contentView.addSubview(bg)
-        bg.topAnchor.constraint(equalTo: contentView.topAnchor).isActive = true
-        bg.leadingAnchor.constraint(equalTo: contentView.leadingAnchor).isActive = true
-        bg.trailingAnchor.constraint(equalTo: contentView.trailingAnchor).isActive = true
-        bg.bottomAnchor.constraint(equalTo: contentView.bottomAnchor).isActive = true
-        
+        contentView.addSubview(titleLabel)
+        NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
+        ])
+    }
+    
+    @objc func flip() {
+        if self.isTitle {
+            self.isTitle = false
+            UIView.transition(with: self, duration: 0.5, options: .transitionFlipFromLeft, animations: nil, completion: nil)
+            self.titleLabel.text = self.facts[0]
+        } else {
+            self.isTitle = true
+            UIView.transition(with: self, duration: 0.5, options: .transitionFlipFromLeft, animations: nil, completion: nil)
+            self.titleLabel.text = self.titleName
+        }
     }
     
     required init?(coder: NSCoder) {

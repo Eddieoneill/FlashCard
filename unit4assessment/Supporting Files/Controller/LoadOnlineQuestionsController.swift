@@ -11,7 +11,8 @@ import UIKit
 class LoadOnlineQuestionsController: UIViewController {
     
     var cards = [Cards]()
-    var collections = [UICollectionViewCell]()
+    var collections = [CustomCell]()
+    var saveDelegate: PassCellDelegate?
     
     fileprivate let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -27,31 +28,40 @@ class LoadOnlineQuestionsController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         loadQuestion()
-        view.addSubview(createButton())
         view.backgroundColor = .gray
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.25, execute: {
+            self.view.addSubview(self.collectionView)
+            self.collectionView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 50).isActive = true
+            self.collectionView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 1).isActive = true
+            self.collectionView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -1).isActive = true
+            self.collectionView.heightAnchor.constraint(equalTo: self.view.heightAnchor, constant: 1).isActive = true
+            self.collectionView.backgroundColor = .gray
+            self.collectionView.delegate = self
+            self.collectionView.dataSource = self
+        })
     }
     
-    func createButton() -> UIButton {
-        let frame = CGRect(x: view.frame.width - 105, y: 20, width: 100, height: 20)
-        let button = UIButton(type: .system)
-        button.layer.cornerRadius = 10
-        button.frame = frame
-        button.setTitle("Load Cells", for: .normal)
-        button.backgroundColor = .white
-        button.addTarget(self, action: #selector(addQuestions), for: .touchUpInside)
-        
-        return button
+    @IBAction func gesture(_ sender: UITapGestureRecognizer) {
+        let point = sender.location(in: collectionView)
+        if let indexPath = collectionView.indexPathForItem(at: point) {
+            if collections[indexPath.row].isTitle {
+                collections[indexPath.row].isTitle = false
+                UIView.transition(with: collections[indexPath.row], duration: 0.5, options: .transitionFlipFromLeft, animations: nil, completion: nil)
+                collections[indexPath.row].titleLabel.text = collections[indexPath.row].facts[0]
+            } else {
+                collections[indexPath.row].isTitle = true
+                UIView.transition(with: collections[indexPath.row], duration: 0.5, options: .transitionFlipFromLeft, animations: nil, completion: nil)
+                collections[indexPath.row].titleLabel.text = collections[indexPath.row].titleName
+            }
+        }
     }
     
-    @objc func addQuestions() {
-        view.addSubview(collectionView)
-        collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50).isActive = true
-        collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 1).isActive = true
-        collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -1).isActive = true
-        collectionView.heightAnchor.constraint(equalTo: view.heightAnchor, constant: 1).isActive = true
-        collectionView.backgroundColor = .gray
-        collectionView.delegate = self
-        collectionView.dataSource = self
+    @objc func sendData(_ cell: CustomCell) {
+        saveDelegate?.save(cell: cell)
+    }
+    
+    func setupView() -> UIGestureRecognizer {
+        return UITapGestureRecognizer(target: self, action: #selector(gesture(_:)))
     }
     
     func loadQuestion() {
@@ -64,6 +74,8 @@ class LoadOnlineQuestionsController: UIViewController {
             }
         }
     }
+    
+
 }
 
 extension LoadOnlineQuestionsController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
@@ -74,50 +86,35 @@ extension LoadOnlineQuestionsController: UICollectionViewDelegateFlowLayout, UIC
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print(cards[0].cards)
         return cards[0].cards.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        let label = UILabel()
-        
-        label.frame = CGRect(x: 20, y: 20, width: cell.frame.width, height: cell.frame.height)
-        label.text = cards[0].cards[indexPath.row].cardTitle
-        cell.contentView.addSubview(label)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCell
+
+        cell.titleName = cards[0].cards[indexPath.row].cardTitle
+        cell.titleLabel.text = cell.titleName
+        cell.facts = cards[0].cards[indexPath.row].facts
+        cell.titleLabel.numberOfLines = 0
         cell.backgroundColor = .white
+        cell.isUserInteractionEnabled = true
+        cell.addGestureRecognizer(setupView())
         collections.append(cell)
+        
+        sendData(cell)
+        
         return cell
     }
 }
 
-//    extension ViewController: UITableViewDataSource, UITableViewDelegate {
-//        func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//            return elementList.count
-//        }
-//
-//        func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//
-//            let element = elementList[indexPath.row]
-//            guard let cell = tableView.dequeueReusableCell(withIdentifier: "ElementX") as? ElementTableViewCell else {return UITableViewCell()}
-//            cell.setElement(element: element)
-//            return cell
-//        }
-//
-//        func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//            return CGFloat(200)
-//        }
-//
-//        override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//
-//            switch segue.identifier! {
-//            case "ElementDetailScreen":
-//                if let destination = segue.destination as? ElementDetailViewController {
-//                    destination.element = elementList[tableView.indexPathForSelectedRow!.row]
-//                }
-//            default:
-//                fatalError()
-//            }
-//
-//        }
-//}
+extension LoadOnlineQuestionsController: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        let point = touch.location(in: collectionView)
+        if let indexPath = collectionView.indexPathForItem(at: point),
+            let cell = collectionView.cellForItem(at: indexPath) {
+            return touch.location(in: cell).y > 50
+        }
+        return false
+    }
+}
+

@@ -19,7 +19,7 @@ class NewQuestionController: UIViewController {
     var questionfact1 = UITextField()
     var questionfact2 = UITextField()
     let numbersToolbar = UIToolbar(frame:CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
-    var questionDelegate: NewQuestionDelegate!
+    var questionDelegate: NewQuestionDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,7 +69,7 @@ class NewQuestionController: UIViewController {
     @objc func addNewQuestion() {
         var newQuestion: String = ""
         newQuestion = questionTitle.text ?? "no title"
-        questionDelegate.didAddQuestion(newQuestion)
+        questionDelegate?.didAddQuestion(newQuestion)
         dismiss(animated: true, completion: nil)
     }
     

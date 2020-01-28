@@ -8,14 +8,13 @@
 
 import UIKit
 
+protocol PassCellDelegate {
+    func save(cell: CustomCell)
+}
+
 class YourQuestionsController: UIViewController {
     
-    var collection = [UICollectionViewCell]()
-    var labels = [UILabel]()
-    var cellCount = 1
-    var questionList = [[String: [String]]]()
-    var isOpen = false
-    var count = 0
+    var savedQuestions = [CustomCell]()
     
     fileprivate let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -28,15 +27,12 @@ class YourQuestionsController: UIViewController {
         return cv
     }()
     
-    fileprivate func setupView(_ cell: UICollectionViewCell) -> UIGestureRecognizer {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(moveCell))
-        return tap
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.backgroundColor = .gray
         view.addSubview(collectionView)
+        view.addSubview(checkData())
         collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50).isActive = true
         collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 1).isActive = true
         collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -1).isActive = true
@@ -47,12 +43,9 @@ class YourQuestionsController: UIViewController {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        if count == 0 {
-            count += 1
-        } else {
-            let rvc = NewQuestionController()
-            rvc.questionDelegate = self
-        }
+        let vc = LoadOnlineQuestionsController()
+        vc.saveDelegate = self
+        //present(vc, animated: true, completion: nil)
     }
     
     func createButton(_ cell: UICollectionViewCell) -> UIButton {
@@ -68,23 +61,24 @@ class YourQuestionsController: UIViewController {
         return button
     }
     
-    @objc func moveCell() {
-        if isOpen {
-            isOpen = false
-            UIView.transition(with: collection[0], duration: 0.5, options: .transitionFlipFromLeft, animations: nil, completion: nil)
-            labels[0].text = "hello"
-        } else {
-            isOpen = true
-            UIView.transition(with: collection[0], duration: 0.5, options: .transitionFlipFromLeft, animations: nil, completion: nil)
-            labels[0].text = "I'm back"
-        }
+    func checkData() -> UIButton {
+        let frame = CGRect(x: 10, y: 10, width: 20, height: 100)
+        let button = UIButton(type: .system)
+        button.layer.cornerRadius = 10
+        button.frame = frame
+        button.backgroundColor = .systemBlue
+        button.addTarget(self, action: #selector(gotTheData), for: .touchUpInside)
+        
+        return button
     }
     
     @objc func removeCell(_ cell: UICollectionViewCell) {
         cell.removeFromSuperview()
     }
     
-    
+    @objc func gotTheData() {
+        print(savedQuestions.count)
+    }
 }
 
 extension YourQuestionsController: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
@@ -100,31 +94,13 @@ extension YourQuestionsController: UICollectionViewDelegateFlowLayout, UICollect
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        let label = UILabel()
-        //        for label in labels {
-        //            label.removeFromSuperview()
-        //        }
-        cell.addSubview(label)
-        label.tag = cellCount
-        label.frame = CGRect(x: 20, y: 20, width: cell.frame.width, height: cell.frame.height)
-        label.text = "\(cellCount)"
-        label.textColor = .black
-        labels.append(label)
-        collection.append(cell)
-        cell.contentView.addSubview(createButton(cell))
-        cell.tag = cellCount
-        cell.backgroundColor = .white
-        cellCount += 1
-        cell.isUserInteractionEnabled = true
-        cell.addGestureRecognizer(setupView(cell))
+
         return cell
     }
 }
 
-extension YourQuestionsController: NewQuestionDelegate {
-    func didAddQuestion(_ question: String) {
-        let label = UILabel(frame: CGRect(x: 0, y: collection[0].bounds.size.height / 2, width: 100, height: 100))
-        label.text = question
-        collection[0].contentView.addSubview(label)
+extension YourQuestionsController: PassCellDelegate {
+    func save(cell: CustomCell) {
+        self.savedQuestions.append(cell)
     }
 }
