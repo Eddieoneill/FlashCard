@@ -46,6 +46,7 @@ class YourQuestionsController: UIViewController {
         let vc = LoadOnlineQuestionsController()
         vc.saveDelegate = self
         //present(vc, animated: true, completion: nil)
+        
     }
     
     func createButton(_ cell: UICollectionViewCell) -> UIButton {
@@ -93,8 +94,8 @@ extension YourQuestionsController: UICollectionViewDelegateFlowLayout, UICollect
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCell
+        cell.backgroundColor = .white
         return cell
     }
 }
