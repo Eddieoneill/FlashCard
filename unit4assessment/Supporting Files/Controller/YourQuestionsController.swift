@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 class YourQuestionsController: UIViewController {
     
@@ -28,49 +29,22 @@ class YourQuestionsController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .gray
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        let tabbar = tabBarController as! BaseTabBarController
-        savedQuestions = Array(tabbar.sharedCells)
+        collectionView.delegate = self
+        collectionView.dataSource = self
         view.addSubview(collectionView)
         collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 50).isActive = true
         collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 1).isActive = true
         collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -1).isActive = true
         collectionView.heightAnchor.constraint(equalTo: view.heightAnchor, constant: 1).isActive = true
         collectionView.backgroundColor = .gray
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
+        count = 0
         let tabbar = tabBarController as! BaseTabBarController
-        savedQuestions = Array(tabbar.sharedCells)
+        savedQuestions = tabbar.sharedCells
         collectionView.reloadData()
-    }
-    
-    @IBAction func gesture(_ sender: UITapGestureRecognizer) {
-        let point = sender.location(in: collectionView)
-        if let indexPath = collectionView.indexPathForItem(at: point) {
-            if storedCells[indexPath.row].isTitle {
-                storedCells[indexPath.row].isTitle = false
-                UIView.transition(with: storedCells[indexPath.row], duration: 1, options: .transitionFlipFromLeft, animations: nil, completion: nil)
-                storedCells[indexPath.row].titleLabel.text = storedCells[indexPath.row].facts.randomElement()!
-                storedCells[indexPath.row].addButton.isEnabled = false
-                storedCells[indexPath.row].addButton.alpha = 0
-            } else {
-                storedCells[indexPath.row].isTitle = true
-                UIView.transition(with: storedCells[indexPath.row], duration: 1, options: .transitionFlipFromLeft, animations: nil, completion: nil)
-                storedCells[indexPath.row].titleLabel.text = storedCells[indexPath.row].titleName
-                storedCells[indexPath.row].addButton.isEnabled = true
-                storedCells[indexPath.row].addButton.alpha = 1
-            }
-        }
-    }
-    
-    func setupView() -> UIGestureRecognizer {
-        return UITapGestureRecognizer(target: self, action: #selector(gesture(_:)))
+
     }
     
     func createButton(_ cell: UICollectionViewCell) -> UIButton {
@@ -98,9 +72,12 @@ class YourQuestionsController: UIViewController {
     }
     
     @objc func removeCell(_ sender: ModdedUIButton) {
+        count = 0
         let cell = sender.cell
-        
-        
+        let tabbar = tabBarController as! BaseTabBarController
+        tabbar.sharedCells.remove(at: cell!.tag)
+        savedQuestions.remove(at: cell!.tag)
+        collectionView.reloadData()
     }
     
     @objc func gotTheData() {
@@ -113,6 +90,24 @@ extension YourQuestionsController: UICollectionViewDelegateFlowLayout, UICollect
         let viewWidth = view.frame.width
         let size = CGSize(width: (viewWidth / 2 - 5), height: (viewWidth - 60))
         return size
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        guard let selectedCell = collectionView.cellForItem(at: indexPath) as? CustomCell else { return }
+            if selectedCell.isTitle {
+            selectedCell.isTitle = false
+            UIView.transition(with: selectedCell, duration: 1, options: .transitionFlipFromLeft, animations: nil, completion: nil)
+            selectedCell.titleLabel.text = selectedCell.facts.randomElement()!
+            selectedCell.addButton.isEnabled = false
+            selectedCell.addButton.alpha = 0
+        } else {
+            selectedCell.isTitle = true
+            UIView.transition(with: selectedCell, duration: 1, options: .transitionFlipFromLeft, animations: nil, completion: nil)
+            selectedCell.titleLabel.text = selectedCell.titleName
+            selectedCell.addButton.isEnabled = true
+            selectedCell.addButton.alpha = 1
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -128,25 +123,11 @@ extension YourQuestionsController: UICollectionViewDelegateFlowLayout, UICollect
         cell.addButton.frame = CGRect(x: cell.frame.width - 55, y: 5, width: 50, height: 50)
         cell.addButton.setImage(UIImage(named: "more-filled"), for: .normal)
         cell.addButton.addTarget(self, action: #selector(removeCell(_:)), for: .touchUpInside)
-        cell.indexPath = indexPath
         cell.tag = count
+        cell.indexPath = indexPath
         cell.backgroundColor = .white
-        cell.isUserInteractionEnabled = true
-        cell.addGestureRecognizer(setupView())
         storedCells.append(cell)
         count += 1
         return cell
-    }
-}
-
-
-extension YourQuestionsController: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        let point = touch.location(in: collectionView)
-        if let indexPath = collectionView.indexPathForItem(at: point),
-            let cell = collectionView.cellForItem(at: indexPath) {
-            return touch.location(in: cell).y > 50
-        }
-        return false
     }
 }

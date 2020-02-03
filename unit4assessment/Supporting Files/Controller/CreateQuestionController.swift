@@ -66,7 +66,7 @@ class CreateQuestionController: UIViewController {
         let tabbar = tabBarController as! BaseTabBarController
         newCell.titleName = questionTitle.text ?? "no title"
         newCell.facts = [questionfact1.text ?? "no fact 1", questionfact2.text ?? "no fact 2"]
-        tabbar.sharedCells.insert(newCell)
+        tabbar.sharedCells.append(newCell)
         
         questionTitle.text = ""
         questionfact1.text = ""

@@ -31,7 +31,7 @@ class CustomCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        addButton.cell = self
         contentView.addSubview(titleLabel)
         contentView.addSubview(addButton)
         NSLayoutConstraint.activate([

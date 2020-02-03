@@ -10,7 +10,7 @@ import UIKit
 
 class LoadOnlineQuestionsController: UIViewController {
     
-    var cards = [Cards]()
+    lazy var cards = [Cards]()
     var collections = [CustomCell]()
     
     fileprivate let collectionView: UICollectionView = {
@@ -40,40 +40,11 @@ class LoadOnlineQuestionsController: UIViewController {
         self.collectionView.backgroundColor = .gray
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        let tabbar = tabBarController as! BaseTabBarController
-        cards = tabbar.cards
-        collectionView.reloadData()
-    }
-    
-    @IBAction func gesture(_ sender: UITapGestureRecognizer) {
-        let point = sender.location(in: collectionView)
-        if let indexPath = collectionView.indexPathForItem(at: point) {
-            if collections[indexPath.row].isTitle {
-                collections[indexPath.row].isTitle = false
-                UIView.transition(with: collections[indexPath.row], duration: 1, options: .transitionFlipFromLeft, animations: nil, completion: nil)
-                collections[indexPath.row].titleLabel.text = collections[indexPath.row].facts.randomElement()!
-                collections[indexPath.row].addButton.isEnabled = false
-                collections[indexPath.row].addButton.alpha = 0
-            } else {
-                collections[indexPath.row].isTitle = true
-                UIView.transition(with: collections[indexPath.row], duration: 1, options: .transitionFlipFromLeft, animations: nil, completion: nil)
-                collections[indexPath.row].titleLabel.text = collections[indexPath.row].titleName
-                collections[indexPath.row].addButton.isEnabled = true
-                collections[indexPath.row].addButton.alpha = 1
-            }
-        }
-    }
-    
     @IBAction func addCell(_ sender: ModdedUIButton) {
         let cell = sender.cell
         let tabbar = tabBarController as! BaseTabBarController
         
-        tabbar.sharedCells.insert(cell!)
-    }
-    
-    func setupView() -> UIGestureRecognizer {
-        return UITapGestureRecognizer(target: self, action: #selector(gesture(_:)))
+        tabbar.sharedCells.append(cell!)
     }
 }
 
@@ -88,6 +59,24 @@ extension LoadOnlineQuestionsController: UICollectionViewDelegateFlowLayout, UIC
         return cards[0].cards.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        guard let selectedCell = collectionView.cellForItem(at: indexPath) as? CustomCell else { return }
+            if selectedCell.isTitle {
+            selectedCell.isTitle = false
+            UIView.transition(with: selectedCell, duration: 1, options: .transitionFlipFromLeft, animations: nil, completion: nil)
+            selectedCell.titleLabel.text = selectedCell.facts.randomElement()!
+            selectedCell.addButton.isEnabled = false
+            selectedCell.addButton.alpha = 0
+        } else {
+            selectedCell.isTitle = true
+            UIView.transition(with: selectedCell, duration: 1, options: .transitionFlipFromLeft, animations: nil, completion: nil)
+            selectedCell.titleLabel.text = selectedCell.titleName
+            selectedCell.addButton.isEnabled = true
+            selectedCell.addButton.alpha = 1
+        }
+    }
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! CustomCell
         
@@ -101,21 +90,8 @@ extension LoadOnlineQuestionsController: UICollectionViewDelegateFlowLayout, UIC
         cell.addButton.cell = cell
         cell.backgroundColor = .white
         cell.isUserInteractionEnabled = true
-        cell.addGestureRecognizer(setupView())
-        collections.append(cell)
         
         return cell
-    }
-}
-
-extension LoadOnlineQuestionsController: UIGestureRecognizerDelegate {
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        let point = touch.location(in: collectionView)
-        if let indexPath = collectionView.indexPathForItem(at: point),
-            let cell = collectionView.cellForItem(at: indexPath) {
-            return touch.location(in: cell).y > 50
-        }
-        return false
     }
 }
 

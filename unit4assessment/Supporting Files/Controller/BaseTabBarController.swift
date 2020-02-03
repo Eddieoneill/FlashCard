@@ -10,7 +10,7 @@ import UIKit
 
 class BaseTabBarController: UITabBarController {
 
-    var sharedCells: Set<CustomCell> = []
+    var sharedCells: [CustomCell] = []
     var cards: [Cards] = []
     
     override func viewDidLoad() {
